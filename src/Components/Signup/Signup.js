@@ -1,8 +1,9 @@
 import React, { useState , useContext } from 'react';
-
 import Logo from '../../olx-logo.png';
-import {FirebaseContext} from '../../store/FirebaseContext'
 import './Signup.css';
+import {FirebaseContext ,AuthContext} from '../../store/Context'
+import { useNavigate } from 'react-router-dom';
+import { collection, addDoc} from "firebase/firestore";
 
 export default function Signup() {
 
@@ -11,13 +12,39 @@ export default function Signup() {
   const [phone , setPhone] = useState('')
   const [password , setPassword] =useState('')
   const {firebase} = useContext(FirebaseContext)
-  const { auth } = useContext(FirebaseContext);
+  const navigate = useNavigate()
+ 
+ 
 
-  const handleSubmit = (e) =>{
+  const handleSubmit = async (e) =>{
       e.preventDefault()
-      auth.createUserWithEmailAndPassword(email,password).then((result) =>{
-        result.user.updateProfile({displayName:Username})
+      try {
+        const auth = firebase.firebaseAuth.getAuth()
+         await firebase.firebaseAuth.createUserWithEmailAndPassword(auth, email, password)
+         .then((result) => {
+          
+          const userDocData = {
+            id: result.user.uid,
+            name: Username,
+            phone: phone,
+          }
+         
+        firebase.firebaseAuth.updateProfile(auth.currentUser,{displayName: Username,})
+        .then(async () =>{
+          const usersCollection = collection(firebase.db, "users");
+          await addDoc(usersCollection , userDocData)
+          .then((docRef) =>{
+            navigate('/login')
+          })
+          .catch((error) =>{
+            console.error("Error adding document: ", error);
+          })
+        })
       })
+      } catch (error) {
+        console.error('Error creating user:', error.message);
+      }
+     
   }
   return (
     <div>

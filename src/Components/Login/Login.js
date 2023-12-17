@@ -1,8 +1,9 @@
-import React, { useState , useContext } from 'react';
+import React, { useState , useContext, useRef, useEffect } from 'react';
 import { FirebaseContext , AuthContext } from '../../store/Context';
 import Logo from '../../olx-logo.png';
 import './Login.css';
 import { useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
 
 function Login() {
 
@@ -10,15 +11,44 @@ function Login() {
   const [password, setPassword] = useState('')
   const {firebase} = useContext(FirebaseContext)
   const navigate = useNavigate()
+  const emailInput = useRef(null)
+  const {user} =useContext(AuthContext)
+
+
+useEffect(() =>{
+  if(user)navigate('/')
+  function focusInput() {
+    emailInput.current.focus();
+  }
+  focusInput()
+}, [user , navigate])
+
+
+
+
+
   const handleLogin = async (e) => {
     try {
       e.preventDefault()
+      setEmail((email).toLowerCase().trimEnd())
       const auth = firebase.firebaseAuth.getAuth();
       await firebase.firebaseAuth.signInWithEmailAndPassword(auth, email, password)
       .then(()=>{
+        Swal.fire({ position: 'top-end', icon: 'success', text: 'Login success', width: 200, showConfirmButton: false, timer: 1500 })
         navigate('/')
-      }).catch((err)=>{
-        console.error("Error adding document: ", err);
+      }).catch((err) => {
+        if (err.message === "Firebase: Error (auth/network-request-failed).") {
+          Swal.fire({
+            icon: 'warning',
+            title: 'Network Error',
+          })
+        }
+        else {
+          Swal.fire({
+            icon: 'error',
+            title: 'Wrong Credentials',
+          })
+        }
       })
     } catch (error) {
       console.log(error.message);
@@ -26,39 +56,42 @@ function Login() {
   }
   return (
     <div>
-      <div className="loginParentDiv">
-        <img width="200px" height="200px" src={Logo}></img>
-        <form onSubmit={handleLogin}>
-          <label htmlFor="fname">Email</label>
-          <br />
-          <input
-            className="input"
-            type="email"
-            value={email}
-            onChange={(input) => setEmail(input.target.value)}
-            id="fname"
-            name="email"
-            defaultValue="John"
-          />
-          <br />
-          <label htmlFor="lname">Password</label>
-          <br />
-          <input
-            className="input"
-            type="password"
-            value={password}
-            onChange={(input) => setPassword(input.target.value)}
-            id="lname"
-            name="password"
-            defaultValue="Doe"
-          />
-          <br />
-          <br />
-          <button>Login</button>
-        </form>
-        <a>Signup</a>
+    <div className="row mx-5 p-4 ">
+      <div className="col-12 col-md-4 p-4"></div>
+      <div className="col-12 col-md-4 p-4 box">
+        <div className="text-center" style={{ cursor: 'pointer' }}>
+          <img width="150em" onClick={() => navigate('/')} src={Logo} alt='OLX-Logo'></img>
+        </div>
+
+        <div className="p-3">
+          <form className="formData" onSubmit={handleLogin}>
+            <div className="col-12 px-2">
+
+              <div className="mb-3">
+                <label htmlFor="email" ref={emailInput} className="form-label">Email address</label>
+                <input type="email" name="email" className="form-control" id="email" pattern="^(?=.*[@])(?=.*[.]).{5,}$"
+                  placeholder="Enter email ID" required
+                  value={email} onChange={(input) => setEmail(input.target.value)} />
+              </div>
+
+              <div className="mb-3">
+                <label htmlFor="password" className="form-label">Password</label>
+                <input type="password" name="password" className="form-control" placeholder="Enter password"
+                  id="password" required
+                  // pattern="^(?=.*[A-Za-z0-9])(?=.*[!@#$%^&*()_+{}\[\]:;<>,.?~\\-=|]).{6,}$" 
+                  value={password} onChange={(input) => setPassword(input.target.value)} />
+              </div>
+
+              <div className="text-center mb-2">
+                <button type="submit" className="btn btn-primary w-50">Login</button>
+              </div>
+              <p className="text-center">New to OLX? <span onClick={() => navigate("/signup")} style={{ cursor: 'pointer' }}>Signup</span></p>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
+  </div>
   );
 }
 

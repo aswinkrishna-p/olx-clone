@@ -6,7 +6,7 @@ import Signup from './Pages/Signup'
 import Home from './Pages/Home';
 import Login from './Pages/Login'
 import Create from './Pages/Create';
-import View from './Components/View/View';
+import View from './Pages/ViewPost';
 
 function App() {
   const {setUser} = useContext(AuthContext)

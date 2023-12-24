@@ -16,16 +16,16 @@ function View() {
     console.log(userID);
     
     async function getSellerData() {
-      //get Seller details from firebase on page load
+      
       const q = query(collection(firebase.db, "users"), where("id", "==", userID));
       const querySnapshot = await getDocs(q);
       const seller = querySnapshot.docs.map((user) => {
         return {
-          id: user.id,   //seller ID
-          ...user.data()  // selller information
+          id: user.id,   
+          ...user.data()  
         }
       })
-      // console.log(seller[0])     //test
+     
       console.log('posted ad details',postDetails)
       setSellerDetails(seller[0])
     }

@@ -25,11 +25,11 @@ const Create = () => {
     const date = new Date()
     try {
 
-      // Upload an image to Firebase Storage
+      
       const storage = getStorage();
       const storageRef = ref(storage, `/image/${image.name}`);
 
-      // 'file' comes from the Blob or File API
+      
       uploadBytes(storageRef, image).then((snapshot) => {
         console.log('Uploaded a blob or file!');  //test
 

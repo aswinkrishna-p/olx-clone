@@ -19,6 +19,21 @@ function Footer() {
             </ul>
           </div>
         </div>
+
+        <div>
+          <div className="heading">
+            <p>TRENDING LOCATIONS</p>
+          </div>
+          <div className="list">
+            <ul>
+              <li>Bhubaneshwar</li>
+              <li>Hyderabad</li>
+              <li>Chandigarh</li>
+              <li>Nashik</li>
+            </ul>
+          </div>
+        </div>
+
         <div>
           <div className="heading">
             <p>ABOUT US</p>
@@ -32,6 +47,7 @@ function Footer() {
             </ul>
           </div>
         </div>
+
         <div>
           <div className="heading">
             <p>OLX</p>
@@ -41,13 +57,15 @@ function Footer() {
               <li>Help</li>
               <li>Sitemap</li>
               <li>Legal & Privacy information</li>
+              <li>Vulnerability Disclosure Program</li>
             </ul>
           </div>
         </div>
+
       </div>
       <div className="footer">
         <p>Other Countries Pakistan - South Africa - Indonesia</p>
-        <p>Free Classifieds in India. © 2006-2021 OLX</p>
+        <p>Free Classifieds in India. © 2006-2023 OLX</p>
       </div>
     </div>
   );

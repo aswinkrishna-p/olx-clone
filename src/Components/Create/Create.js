@@ -13,23 +13,64 @@ const Create = () => {
   const [productDetails, setProductDetails] = useState('')
   const [image, setImage] = useState(null)
   const [price, setPrice] = useState('')
+  const [errors, setErrors] = useState({});
+
 
   const { user } = useContext(AuthContext)
   const { firebase } = useContext(FirebaseContext)
   const navigate = useNavigate();
 
+
+
+  const validateForm = () => {
+    const errors = {};
+
+    if (!productName.trim()) {
+      errors.productName = 'Product Name is required';
+    }
+
+    if (!category.trim()) {
+      errors.category = 'Category is required';
+    }
+
+    if (!productDetails.trim()) {
+      errors.productDetails = 'Product Description is required';
+    }
+
+    if (!image) {
+      errors.image = 'Product Image is required';
+    }
+
+    if (parseFloat(price) < 0) {
+      errors.price = 'Selling Price must be a non-negative number';
+    }
+    if (!price) {
+      errors.price = 'Selling Price is required';
+    }
+
+    setErrors(errors);
+
+    return Object.keys(errors).length === 0; // Return true if there are no errors
+  };
+
   async function handleCreateAd(e) {   //On click of upload and submit
     e.preventDefault()
     console.log('create ad', productName, category, productDetails, price, image.name)  //test mode
     if (!user) return alert('Please login to continue');   // ensure user is logged in
+    
+    if (!validateForm()) {
+      return; // Stop execution if there are validation errors
+    }
+    
     const date = new Date()
+
     try {
 
-      
+      // Upload an image to Firebase Storage
       const storage = getStorage();
       const storageRef = ref(storage, `/image/${image.name}`);
 
-      
+      // 'file' comes from the Blob or File API
       uploadBytes(storageRef, image).then((snapshot) => {
         console.log('Uploaded a blob or file!');  //test
 
@@ -84,7 +125,7 @@ const Create = () => {
 
               <div className="col-12">
                 <label htmlFor="description" className="form-label">Product Description</label>
-                <textarea className="form-control" name="description" id="floatingTextarea2" style={{ height: 20 }}
+                <textarea className="form-control" name="description" id="floatingTextarea2" style={{ height: 30 }}
                   required value={productDetails} onChange={(e) => setProductDetails(e.target.value)}></textarea>
                 <label htmlFor="floatingTextarea2"></label>
               </div>
@@ -108,7 +149,14 @@ const Create = () => {
               </div>
 
             </form>
-
+                    {/* Display validation errors */}
+      {Object.keys(errors).length > 0 && (
+        <div className="alert alert-danger mt-3">
+          {Object.values(errors).map((error, index) => (
+            <p key={index}>{error}</p>
+          ))}
+        </div>
+      )}
           </div>
         </div>
 
@@ -119,4 +167,3 @@ const Create = () => {
 };
 
 export default Create;
-

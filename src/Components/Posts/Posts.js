@@ -73,7 +73,7 @@ function Posts() {
         </div>
         <div className="container-fluid mt-4">
 
-          <div className="card mb-4">
+          {/* <div className="card mb-4">
             <div className="favorite">
               <Heart></Heart>
             </div>
@@ -88,7 +88,7 @@ function Posts() {
             <div className="date">
               <span>Tue Oct 11 2023</span>
             </div>
-          </div>
+          </div> */}
 
           {products.map((product) => {
             return (

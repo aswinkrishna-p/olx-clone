@@ -16,16 +16,16 @@ function View() {
     console.log(userID);
     
     async function getSellerData() {
-      
+      //get Seller details from firebase on page load
       const q = query(collection(firebase.db, "users"), where("id", "==", userID));
       const querySnapshot = await getDocs(q);
       const seller = querySnapshot.docs.map((user) => {
         return {
-          id: user.id,   
-          ...user.data()  
+          id: user.id,   //seller ID
+          ...user.data()  // selller information
         }
       })
-     
+      // console.log(seller[0])     //test
       console.log('posted ad details',postDetails)
       setSellerDetails(seller[0])
     }
@@ -44,6 +44,7 @@ function View() {
               <img className='curv'
                 src={postDetails ? postDetails.imageURL : ''}
                 alt="product"
+                style={{ objectFit: 'cover', width: '100%', height: '100%' }}
               />
             </div>
 

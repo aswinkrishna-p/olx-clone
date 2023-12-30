@@ -10,6 +10,7 @@ function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const { firebase } = useContext(FirebaseContext)
+  const [errors, setErrors] = useState({});
   const navigate = useNavigate()
   const emailInput = useRef(null)
   const {user} = useContext(AuthContext)
@@ -22,12 +23,32 @@ function Login() {
     focusInput()
   }, [user,navigate])
 
+
+  const validateForm = () => {
+    const errors = {};
+
+    if (!email.trim()) {
+      errors.email = 'Email is required';
+    }
+
+    if (!password.trim()) {
+      errors.password = 'Password is required';
+    }
+
+    setErrors(errors);
+
+    return Object.keys(errors).length === 0; // Return true if there are no errors
+  };
+
   const handleLogin = async (event) => {      //Submit the Login data and redirect to Home
     try {
       event.preventDefault()
       setEmail((email).toLowerCase().trimEnd())
 
       // console.log(email, password)   //test mode
+      if (!validateForm()) {
+        return; // Stop execution if there are validation errors
+      }
 
       const auth = firebase.firebaseAuth.getAuth();
       await firebase.firebaseAuth.signInWithEmailAndPassword(auth, email, password)
@@ -77,6 +98,7 @@ function Login() {
                   <input type="email" name="email" className="form-control" id="email" pattern="^(?=.*[@])(?=.*[.]).{5,}$"
                     placeholder="Enter email ID" required
                     value={email} onChange={(input) => setEmail(input.target.value)} />
+                    {errors.email && <div className="invalid-feedback">{errors.email}</div>}
                 </div>
 
                 <div className="mb-3">
@@ -85,6 +107,7 @@ function Login() {
                     id="password" required
                     // pattern="^(?=.*[A-Za-z0-9])(?=.*[!@#$%^&*()_+{}\[\]:;<>,.?~\\-=|]).{6,}$" 
                     value={password} onChange={(input) => setPassword(input.target.value)} />
+                    {errors.password && <div className="invalid-feedback">{errors.password}</div>}
                 </div>
 
                 <div className="text-center mb-2">
